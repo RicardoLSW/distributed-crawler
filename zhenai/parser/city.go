@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"distributed-crawler/config"
 	"regexp"
 
 	"distributed-crawler/engine"
@@ -14,11 +15,11 @@ func ParseCity(contents []byte, _ string) engine.ParseResult {
 	matches := profileRe.FindAllSubmatch(contents, -1)
 	result := engine.ParseResult{}
 	for _, m := range matches {
-		result.Requests = append(result.Requests, engine.Request{Url: string(m[1]), ParserFunc: ProfileParser(string(m[2]))})
+		result.Requests = append(result.Requests, engine.Request{Url: string(m[1]), Parser: NewProfileParser(string(m[2]))})
 	}
 	matches2 := cityUrlRe.FindAllSubmatch(contents, -1)
 	for _, m := range matches2 {
-		result.Requests = append(result.Requests, engine.Request{Url: string(m[1]), ParserFunc: ParseCity})
+		result.Requests = append(result.Requests, engine.Request{Url: string(m[1]), Parser: engine.NewFuncParser(ParseCity, config.ParseCity)})
 	}
 	return result
 }

@@ -51,8 +51,20 @@ func parseProfile(contents []byte, name string, url string) engine.ParseResult {
 	return result
 }
 
-func ProfileParser(name string) engine.ParserFunc {
-	return func(c []byte, url string) engine.ParseResult {
-		return parseProfile(c, name, url)
+type ProfileParser struct {
+	userName string
+}
+
+func (p ProfileParser) Parse(contents []byte, url string) engine.ParseResult {
+	return parseProfile(contents, url, p.userName)
+}
+
+func (p ProfileParser) Serialize() (name string, args interface{}) {
+	return "ProfileParser", p.userName
+}
+
+func NewProfileParser(name string) *ProfileParser {
+	return &ProfileParser{
+		userName: name,
 	}
 }

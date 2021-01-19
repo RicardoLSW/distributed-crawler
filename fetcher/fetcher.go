@@ -16,7 +16,7 @@ import (
 	"golang.org/x/text/transform"
 )
 
-var rateLimiter = time.Tick(200 * time.Millisecond)
+var rateLimiter = time.Tick(333 * time.Millisecond)
 
 func Fetch(url string) ([]byte, error) {
 	<-rateLimiter

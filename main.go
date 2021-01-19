@@ -1,14 +1,16 @@
 package main
 
 import (
+	"distributed-crawler/config"
 	"distributed-crawler/engine"
 	"distributed-crawler/persist/client"
 	"distributed-crawler/scheduler"
 	"distributed-crawler/zhenai/parser"
+	"fmt"
 )
 
 func main() {
-	itemSaver, err := client.ItemSaver(":1234")
+	itemSaver, err := client.ItemSaver(fmt.Sprintf(":%d", config.ItemSaverPort))
 	if err != nil {
 		panic(err)
 	}

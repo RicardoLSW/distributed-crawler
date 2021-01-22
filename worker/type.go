@@ -86,13 +86,7 @@ func deserializeParser(p SerializedParser) (engine.Parser, error) {
 	case config.NilParser:
 		return engine.NilParser{}, nil
 	default:
+		fmt.Println(p.FuncName)
 		return nil, errors.New("unknown parser name")
 	}
-}
-
-type CrawlService struct {
-}
-
-func (CrawlService) Process(req engine.Request, result *engine.ParseResult) {
-
 }

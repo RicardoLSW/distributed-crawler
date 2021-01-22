@@ -2,6 +2,7 @@ package fetcher
 
 import (
 	"bufio"
+	"distributed-crawler/config"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -27,17 +28,9 @@ func Fetch(url string) ([]byte, error) {
 		return nil, err
 	}
 
-	userAgent, err := ioutil.ReadFile("useragent")
-	if err != nil {
-		return nil, err
-	}
-	request.Header.Set("User-Agent", string(userAgent))
+	request.Header.Set("User-Agent", config.Useragent)
 
-	cookie, err := ioutil.ReadFile("cookies")
-	if err != nil {
-		return nil, err
-	}
-	request.Header.Add("cookie", string(cookie))
+	request.Header.Add("cookie", config.Cookies)
 
 	resp, err := client.Do(request)
 	if err != nil {
@@ -46,9 +39,6 @@ func Fetch(url string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		//body, _ := ioutil.ReadAll(resp.Body)
-		//fmt.Printf("%s", body)
-		//println()
 		return nil, fmt.Errorf("error: status code %d", resp.StatusCode)
 	}
 

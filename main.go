@@ -3,18 +3,28 @@ package main
 import (
 	"distributed-crawler/config"
 	"distributed-crawler/engine"
-	"distributed-crawler/persist/client"
+	itemSaver "distributed-crawler/persist/client"
 	"distributed-crawler/scheduler"
+	worker "distributed-crawler/worker/client"
 	"distributed-crawler/zhenai/parser"
 	"fmt"
 )
 
 func main() {
-	itemSaver, err := client.ItemSaver(fmt.Sprintf(":%d", config.ItemSaverPort))
+	itemChan, err := itemSaver.ItemSaver(fmt.Sprintf(":%d", config.ItemSaverPort))
 	if err != nil {
 		panic(err)
 	}
-	concurrentEngine := engine.ConcurrentEngine{Scheduler: &scheduler.QueuedScheduler{}, WorkerCount: 10, ItemChan: itemSaver}
+	processor, err := worker.CreateProcessor()
+	if err != nil {
+		panic(err)
+	}
+	concurrentEngine := engine.ConcurrentEngine{
+		Scheduler:        &scheduler.QueuedScheduler{},
+		WorkerCount:      10,
+		ItemChan:         itemChan,
+		RequestProcessor: processor,
+	}
 	//concurrentEngine.Run(engine.Request{
 	//	Url:        "http://www.zhenai.com/zhenghun",
 	//	ParserFunc: parser.ParseCityList,
